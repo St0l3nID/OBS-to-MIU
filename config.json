@@ -1,0 +1,9 @@
+{
+  "OBS_HOST" : "localhost",
+  "OBS_PORT" : 4455,
+  "OBS_PASSWORD" : "",
+  "OBS_SOURCE" : "Game Capture",
+  "MIXITUP_HOST" : "localhost",
+  "MIXITUP_PORT" : 8911,
+  "MIXITUP_COMMAND" : "OBS Title Change"
+}
