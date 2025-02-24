@@ -2,11 +2,9 @@
   "OBS_HOST" : "localhost",
   "OBS_PORT" : 4455,
   "OBS_PASSWORD" : "",
-  "OBS_SOURCE" : "Game Capture",
   "MIXITUP_HOST" : "localhost",
   "MIXITUP_PORT" : 8911,
   "OBS_MIU_MAPPINGS" : {
-
 	"SceneTransitionVideoEnded" : {
       "miu_action_group": "Transition Ended"
     },
@@ -16,7 +14,7 @@
         "sceneItemId" : 10
       },
       "miu_action_group": "PlayMusic",
-      "arguments": ["$sceneName", "$sceneItemEnabled", "test"]
+      "arguments": ["Scene:",  "$sceneName", "$sceneItemEnabled"]
     },
     "SceneTransitionStarted" : {
       "conditions": {

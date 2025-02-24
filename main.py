@@ -60,21 +60,28 @@ def standardize_action(json_action):
     if "name" in json_action:
         name = json_action["name"]
 
+    arguments = ''
+    if "arguments" in json_action:
+        arguments =  json_action["arguments"]
+    if "argument" in json_action:
+        arguments =  json_action["argument"]
+
 
     result = {
             "name" : name,
             "conditions" : standardize_conditions(json_action.get('conditions', {})),
-            "arguments" : json_action.get('arguments', '')
+            "arguments" : arguments
         }
     return result
 
 def on_event(event):
     """Callback function to handle OBS events."""
-    print(event)
+    if DEBUG_MODE: print(event)
 
     # if there is no mapping we return
     if not event.name in OBS_MIU_MAPPINGS:
         return
+
     mapping = OBS_MIU_MAPPINGS[event.name]
 
     actions = []
@@ -84,8 +91,6 @@ def on_event(event):
 
     if "miu_action_group" in mapping:
         actions.append(standardize_action(mapping))
-
-    print(actions)
 
     for action in actions:
         # if there is no miu action to call we return
@@ -171,18 +176,17 @@ def send_to_mixitup(action, arguments):
     command_id = get_miu_command_id(action)
     if not command_id:
         return
-    print(f"Called {command_id}")
 
     url = f"http://{MIXITUP_HOST}:{MIXITUP_PORT}/api/v2/commands/{command_id}"
     event_data = {
-        "Arguments": " ".join(arguments) if type(arguments) is list else arguments,
-        "Platform": "Twitch"
+        "Arguments": arguments,
+        "Platform": "All"
     }
 
     try:
         response = requests.post(url, json=event_data)
         if response.status_code == 200:
-            print(f"Sent to Mix It Up: {event_data}")
+            print(f"Sent to Mix It Up-\"{action}\": {event_data}")
         else:
             print(f"Error sending to Mix It Up: {response.status_code} {response.text}")
     except Exception as e:
