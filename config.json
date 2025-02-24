@@ -31,18 +31,18 @@
           },
           "name": "PlayMusic",
           "arguments": ["$sceneName", "chill"]
-        },
-        {
-          "conditions": {
-            "sceneName": ["ANY_UNDEFINED"]
-          },
-          "name": "PlayMusic",
-          "argument": "stop"
         }
       ]
     },
-	"ANY_UNDEFINED" : {
-		"miu_action_group": "Unspecified Events"
+	"InputSettingsChanged" : {
+		"conditions" : {
+			"inputName" : "Text AFK",
+			"inputSettings" : {
+				"text" : "Only Trigger if text is this"
+			}
+		},
+		"arguments": "newText: $inputSettings/text",
+		"miu_action_group" : "TestBridge2"
 	}
   }
 }
