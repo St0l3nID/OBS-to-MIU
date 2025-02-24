@@ -5,5 +5,45 @@
   "OBS_SOURCE" : "Game Capture",
   "MIXITUP_HOST" : "localhost",
   "MIXITUP_PORT" : 8911,
-  "MIXITUP_COMMAND" : "OBS Title Change"
+  "OBS_MIU_MAPPINGS" : {
+
+	"SceneTransitionVideoEnded" : {
+      "miu_action_group": "Transition Ended"
+    },
+    "SceneItemEnableStateChanged": {
+      "conditions": {
+        "sceneName": "TestScene",
+        "sceneItemId" : 10
+      },
+      "miu_action_group": "PlayMusic",
+      "arguments": ["$sceneName", "$sceneItemEnabled", "test"]
+    },
+    "SceneTransitionStarted" : {
+      "conditions": {
+        "transitionName": "Cut"
+      },
+      "miu_action_group": "Cut Transition Started"
+    },
+    "CurrentProgramSceneChanged" : {
+      "miu_action_groups": [
+        {
+          "conditions": {
+            "sceneName": ["AFK", "IRL"]
+          },
+          "name": "PlayMusic",
+          "arguments": ["$sceneName", "chill"]
+        },
+        {
+          "conditions": {
+            "sceneName": ["ANY_UNDEFINED"]
+          },
+          "name": "PlayMusic",
+          "argument": "stop"
+        }
+      ]
+    },
+	"ANY_UNDEFINED" : {
+		"miu_action_group": "Unspecified Events"
+	}
+  }
 }

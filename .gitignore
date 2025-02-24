@@ -1,6 +1,7 @@
 # Ignore Python virtual environment folder
 .venv/
+.idea/
 
 # Ignore build artifacts
-build/
+build/main
 dist/
