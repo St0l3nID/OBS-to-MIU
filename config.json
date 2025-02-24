@@ -4,6 +4,7 @@
   "OBS_PASSWORD" : "",
   "MIXITUP_HOST" : "localhost",
   "MIXITUP_PORT" : 8911,
+  "DEBUG_MODE" : true,
   "OBS_MIU_MAPPINGS" : {
 	"SceneTransitionVideoEnded" : {
       "miu_action_group": "Transition Ended"

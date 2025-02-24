@@ -29,13 +29,16 @@ def standardize_arguments(arguments):
         return " ".join(arguments)
     return arguments
 
-def replace_identifiers(text, event):
+def replace_identifiers(text, event, prefix=""):
     if len(text) < 1:
         return text
 
     modified = text
     for key, value in event.items():
-        potential = '$' + key
+        if type(value) is dict:
+            modified = replace_identifiers(modified, value, prefix+key+"/")
+
+        potential = '$' + prefix + key
         if potential in modified:
             modified = modified.replace(potential, str(value))
 
@@ -108,6 +111,10 @@ def evaluate_conditions(conditions, data):
     for name, value in conditions:
         if not name in data:
             return False
+
+        if type(value) is dict:
+            if not evaluate_conditions(name, value):
+                return False
 
         allowed_values = []
         if type(value) is list:
