@@ -35,14 +35,26 @@
       ]
     },
 	"InputSettingsChanged" : {
-		"conditions" : {
-			"inputName" : "Text AFK",
-			"inputSettings" : {
-				"text" : "Only Trigger if text is this"
-			}
-		},
-		"arguments": "newText: $inputSettings/text",
-		"miu_action_group" : "TestBridge2"
+      "miu_action_groups": [
+        {
+          "conditions": {
+            "inputName": "Text AFK",
+            "inputSettings": {
+              "text": "Only Trigger if text is this"
+            }
+          },
+          "arguments": "newText: $inputSettings/text",
+          "miu_action_group": "TestBridge2"
+        },
+        {
+          "conditions" : {
+              "inputName" : "Game Capture"
+          },
+          "arguments": "WindowTitle $inputSettings/window",
+          "arguments_process": "arguments.split(':', 1)[0]",
+          "miu_action_group" : "TestBridge2"
+        }
+      ]
 	}
   }
 }

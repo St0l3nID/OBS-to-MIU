@@ -64,16 +64,22 @@ def standardize_action(json_action):
         name = json_action["name"]
 
     arguments = ''
+    arguments_process = "arguments"
     if "arguments" in json_action:
         arguments =  json_action["arguments"]
     if "argument" in json_action:
         arguments =  json_action["argument"]
+    if "arguments_process" in json_action:
+        arguments_process = json_action["arguments_process"]
+    if "argument_process" in json_action:
+        arguments_process = json_action["argument_process"]
 
 
     result = {
             "name" : name,
             "conditions" : standardize_conditions(json_action.get('conditions', {})),
-            "arguments" : arguments
+            "arguments" : arguments,
+            "arguments_process" : arguments_process
         }
     return result
 
@@ -102,6 +108,8 @@ def on_event(event):
         arguments = action["arguments"]
         arguments = " ".join(arguments) if type(arguments) is list else arguments
         arguments = replace_identifiers(arguments, event.datain)
+
+        arguments = eval(action["arguments_process"], {"arguments" : arguments, "argument" : arguments})
 
         if evaluate_conditions(action["conditions"].items(), event.datain):
             send_to_mixitup(action["name"], arguments)
