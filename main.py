@@ -137,6 +137,8 @@ def evaluate_conditions(conditions, data):
 
 
 
+
+
 def main():
     # Create a WebSocket connection to OBS
     ws = obsws(OBS_HOST, OBS_PORT, OBS_PASSWORD)
@@ -169,7 +171,7 @@ def get_miu_commands():
     url = f"http://{MIXITUP_HOST}:{MIXITUP_PORT}/api/v2/commands"
 
     try:
-        response = requests.get(url, {"skip": "0", "pageSize" : "9999" })
+        response = requests.get(url, {"skip": "0", "pageSize" : "999999" })
         if response.status_code == 200:
             MIXITUP_COMMANDS = json.loads(response.text)['Commands']
             return MIXITUP_COMMANDS
@@ -185,6 +187,7 @@ def get_miu_command_id(name):
         if command['Name'] == name:
             return command['ID']
     return False
+
 
 def send_to_mixitup(action, arguments):
     """Send event data to Mix It Up."""
@@ -208,5 +211,93 @@ def send_to_mixitup(action, arguments):
         print(f"Failed to send to Mix It Up: {e}")
 
 
+def dump(compact = True):
+    """Im dumping all user data"""
+    users = get_miu_users()["Users"]
+    inventories = get_miu_inventories()
+    currencies = get_miu_currencies()
+
+    currencies_dict = {}
+    for currency in currencies:
+        currencies_dict[currency["ID"]] = currency["Name"]
+
+    inventories_dict = {}
+    for inventory in inventories:
+        temp = {}
+        temp["Name"] = inventory["Name"]
+        temp["Items"] = {}
+        for item in inventory["Items"]:
+            temp["Items"][item["ID"]] = item["Name"]
+
+        inventories_dict[inventory["ID"]] = temp
+
+    users_compact = {}
+    for user in users:
+        data = user["PlatformData"]
+        if "Twitch" in data:
+            twitch_data = data["Twitch"]
+            temp = {}
+            temp["DisplayName"] = twitch_data["DisplayName"]
+            temp["Username"] = twitch_data["Username"]
+
+            temp["Currencies"] = {}
+            for cid, amount in user["CurrencyAmounts"].items():
+                temp["Currencies"][currencies_dict[cid]] = amount
+
+            temp["Inventories"] = {}
+            for iid, item in user["InventoryAmounts"].items():
+                inventory = {}
+                for item_id, amount in item.items():
+                    item_name = inventories_dict[iid]["Items"][item_id]
+                    inventory[item_name] = amount
+                temp["Inventories"][inventories_dict[iid]["Name"]] = inventory
+
+
+            users_compact[temp["Username"]] = temp
+
+    users_filtered = {}
+    for name, udata in users_compact.items():
+        if udata["Currencies"] or udata["Inventories"]:
+            users_filtered[name] = udata
+
+    return users_filtered
+
+def get_miu_users():
+    url = f"http://{MIXITUP_HOST}:{MIXITUP_PORT}/api/v2/users"
+    try:
+        response = requests.get(url, {"skip": "0", "pageSize" : "999999" })
+        if response.status_code == 200:
+            return json.loads(response.text)
+        else:
+            print(f"Error requesting Users from Mix It Up: {response.status_code} {response.text}")
+    except Exception as e:
+        print(f"Failed to send to Mix It Up: {e}")
+
+def get_miu_inventories():
+    url = f"http://{MIXITUP_HOST}:{MIXITUP_PORT}/api/v2/inventory"
+    try:
+        response = requests.get(url)
+        if response.status_code == 200:
+            return json.loads(response.text)
+        else:
+            print(f"Error requesting Inventory from Mix It Up: {response.status_code} {response.text}")
+    except Exception as e:
+        print(f"Failed to send to Mix It Up: {e}")
+
+def get_miu_currencies():
+    url = f"http://{MIXITUP_HOST}:{MIXITUP_PORT}/api/v2/currency"
+    try:
+        response = requests.get(url)
+        if response.status_code == 200:
+            return json.loads(response.text)
+        else:
+            print(f"Error requesting Users from Mix It Up: {response.status_code} {response.text}")
+    except Exception as e:
+        print(f"Failed to send to Mix It Up: {e}")
+
+
+
 if __name__ == "__main__":
-    main()
+    #main()
+    data = dump()
+    print(data["st0l3n_id"])
